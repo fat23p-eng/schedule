@@ -3,10 +3,10 @@
 javascriptconst CONFIG = {
   officeName: "Dashboard ตารางนัดหมาย 🎉",      // ← แก้ชื่อหน่วยงาน
   officeSubName: "สำนักงานส่งเสริมสหกรณ์ กทม.", // ← แก้ชื่อย่อย
-  superAdminPin: "9999",                          // ← แก้รหัส Super Admin
+  superAdminPin: "9xx9",                          // ← แก้รหัส Super Admin
 
   defaultGroups: [
-    { name: "กลุ่มอำนวยการ", pin: "1001" },      // ← เพิ่ม/ลบ/แก้กลุ่มงาน
+    { name: "กลุ่มอำนวยการ", pin: "1xx1" },      // ← เพิ่ม/ลบ/แก้กลุ่มงาน
     ...
   ],
 };
