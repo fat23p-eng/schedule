@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สสพ.1 – Dashboard เจ้าหน้าที่ส่งเสริมสหกรณ์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1a4f8a;--primary-light:#2563b0;--primary-dark:#0f2d52;
+  --accent:#e8a000;--success:#16a34a;--danger:#dc2626;--warn:#d97706;
+  --bg:#eef2f8;--surface:#fff;--surface2:#f6f9fc;
+  --border:#d1dbe8;--text:#1e293b;--muted:#64748b;--light:#94a3b8;
+  --sh:0 2px 12px rgba(26,79,138,.10);--sh-md:0 6px 28px rgba(26,79,138,.15);
+  --r:12px;--r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* SETUP */
+#setupScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#091e3a 0%,var(--primary) 55%,#1e6bb8 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+#setupScreen.hide{display:none}
+.setup-card{background:var(--surface);border-radius:20px;padding:40px 36px;width:100%;max-width:500px;box-shadow:0 32px 80px rgba(0,0,0,.35);text-align:center}
+.setup-icon{font-size:3rem;margin-bottom:14px}
+.setup-title{font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:8px}
+.setup-sub{font-size:.84rem;color:var(--muted);margin-bottom:24px;line-height:1.7}
+.setup-field{margin-bottom:14px;text-align:left}
+.setup-field label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.setup-field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:.9rem;font-family:inherit;outline:none;transition:.2s}
+.setup-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,79,138,.12)}
+.setup-hint{font-size:.72rem;color:var(--muted);margin-top:3px}
+#setupError{color:var(--danger);font-size:.8rem;min-height:18px;margin-bottom:8px;text-align:left}
+.btn-setup{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);font-size:.97rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s}
+.btn-setup:hover{background:var(--primary-light)}
+.btn-setup:disabled{opacity:.6;cursor:not-allowed}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:8888;background:linear-gradient(145deg,#091e3a 0%,var(--primary) 55%,#1e6bb8 100%);display:none;align-items:center;justify-content:center;padding:20px}
+#loginScreen.show{display:flex}
+.login-card{background:var(--surface);border-radius:20px;padding:44px 38px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.35);text-align:center}
+.lcard-logo{width:84px;height:84px;margin:0 auto 16px;background:var(--primary-dark);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(26,79,138,.5)}
+.lcard-logo svg{width:52px;height:52px}
+.lcard-title{font-size:1.18rem;font-weight:800;color:var(--primary);line-height:1.35;margin-bottom:4px}
+.lcard-sub{font-size:.82rem;color:var(--muted);margin-bottom:24px}
+.lfield{margin-bottom:13px;text-align:left}
+.lfield label{display:block;font-size:.77rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.lfield input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:.93rem;font-family:inherit;outline:none;transition:.2s}
+.lfield input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,79,138,.12)}
+#loginError{color:var(--danger);font-size:.8rem;min-height:17px;margin-bottom:8px}
+.btn-login{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);font-size:.97rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s}
+.btn-login:hover{background:var(--primary-light);transform:translateY(-1px)}
+.login-change{margin-top:10px;font-size:.73rem;color:var(--light)}
+.login-change a{color:var(--primary);cursor:pointer;text-decoration:underline}
+
+/* APP */
+#app{display:none;flex-direction:column;min-height:100vh}
+#app.show{display:flex}
+.topbar{background:linear-gradient(90deg,var(--primary-dark) 0%,var(--primary) 100%);padding:0 22px;display:flex;align-items:center;gap:12px;height:62px;box-shadow:0 3px 12px rgba(0,0,0,.25);position:sticky;top:0;z-index:200}
+.tb-logo{width:42px;height:42px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-logo svg{width:26px;height:26px}
+.tb-text{flex:1;overflow:hidden}
+.tb-title{font-size:.97rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-sub{font-size:.7rem;color:rgba(255,255,255,.62)}
+.nav-tabs{display:flex;gap:3px;background:rgba(255,255,255,.12);border-radius:8px;padding:3px;flex-shrink:0}
+.nav-tab{padding:5px 14px;border:none;border-radius:6px;font-size:.77rem;font-weight:700;font-family:inherit;cursor:pointer;color:rgba(255,255,255,.75);background:transparent;transition:.2s}
+.nav-tab.active{background:#fff;color:var(--primary)}
+.nav-tab:hover:not(.active){background:rgba(255,255,255,.18);color:#fff}
+.tb-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.tb-user{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border-radius:30px;padding:4px 11px 4px 5px}
+.tb-avatar{width:27px;height:27px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:var(--primary-dark)}
+.tb-uname{font-size:.8rem;color:#fff;font-weight:600}
+.btn-topbar{background:rgba(255,255,255,.14);border:none;border-radius:6px;color:rgba(255,255,255,.88);padding:5px 11px;font-size:.77rem;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-topbar:hover{background:rgba(255,255,255,.26)}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px;animation:pulse 2s infinite}
+.sync-dot.err{background:var(--danger);animation:none}
+.sync-dot.loading{background:var(--accent);animation:spin .8s linear infinite;border-radius:0;width:10px;height:10px;border:2px solid transparent;border-top-color:var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{flex:1;padding:22px;max-width:1440px;margin:0 auto;width:100%}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:13px;margin-bottom:20px}
+.sc{background:var(--surface);border-radius:var(--r);padding:17px;box-shadow:var(--sh);display:flex;align-items:center;gap:13px;border-left:4px solid var(--primary);transition:.2s}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.sc.c-gold{border-color:var(--accent)}.sc.c-green{border-color:var(--success)}.sc.c-warn{border-color:var(--warn)}.sc.c-red{border-color:var(--danger)}
+.sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ic-blue{background:rgba(26,79,138,.1)}.ic-gold{background:rgba(232,160,0,.13)}.ic-green{background:rgba(22,163,74,.11)}.ic-warn{background:rgba(217,119,6,.11)}.ic-red{background:rgba(220,38,38,.1)}
+.sc-num{font-size:1.68rem;font-weight:800;line-height:1}.sc-label{font-size:.75rem;color:var(--muted);margin-top:2px}
+.toolbar{background:var(--surface);border-radius:var(--r);padding:13px 16px;box-shadow:var(--sh);margin-bottom:17px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.sw{position:relative;flex:1;min-width:185px}
+.sw input{width:100%;padding:9px 14px 9px 38px;border:1.5px solid var(--border);border-radius:30px;font-size:.85rem;font-family:inherit;outline:none;transition:.2s}
+.sw input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,79,138,.09)}
+.sw-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;pointer-events:none}
+select.flt{padding:8px 13px;border:1.5px solid var(--border);border-radius:30px;font-size:.83rem;font-family:inherit;outline:none;cursor:pointer;background:var(--surface);color:var(--text);transition:.2s}
+select.flt:focus{border-color:var(--primary)}
+.tb-right-bar{display:flex;gap:7px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.btn{padding:8px 18px;border-radius:30px;border:none;font-size:.84rem;font-family:inherit;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-light);transform:translateY(-1px)}
+.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#15803d}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-sm{padding:6px 13px;font-size:.78rem}
+.table-wrap{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.tw-head{padding:13px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.tw-title{font-size:.92rem;font-weight:800;color:var(--text)}.tw-count{font-size:.75rem;color:var(--muted)}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:820px}
+thead th{background:#f0f5fb;padding:10px 13px;text-align:left;font-size:.73rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap;transition:.15s}
+thead th:hover{background:#e4edf7}thead th.sorted{color:var(--primary)}thead th .si{margin-left:3px;font-size:.68rem}
+tbody tr{border-bottom:1px solid #f0f5fb;transition:.1s}tbody tr:hover{background:#f5f8fd}tbody tr:last-child{border-bottom:none}
+td{padding:10px 13px;font-size:.84rem;vertical-align:middle}
+.td-no{color:var(--light);font-size:.75rem;font-weight:600;text-align:center;width:40px}
+.td-id{font-family:monospace;font-size:.72rem;color:var(--muted)}.td-name{font-weight:700;max-width:240px}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:700;white-space:nowrap}
+.b-sav{background:#dbeafe;color:#1d4ed8}.b-ser{background:#fce7f3;color:#9d174d}
+.b-cre{background:#d1fae5;color:#065f46}.b-sto{background:#fef3c7;color:#92400e}
+.b-agr{background:#dcfce7;color:#14532d}.b-fis{background:#e0f2fe;color:#075985}
+.td-grp{font-size:.8rem;color:var(--primary);font-weight:600}
+.ec{color:var(--light);font-style:italic;font-weight:400}
+.td-act{white-space:nowrap;text-align:right}
+.ab{width:28px;height:28px;border-radius:6px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:.83rem;transition:.15s;margin-left:3px}
+.ab-edit{background:rgba(26,79,138,.1);color:var(--primary)}.ab-edit:hover{background:var(--primary);color:#fff}
+.ab-del{background:rgba(220,38,38,.1);color:var(--danger)}.ab-del:hover{background:var(--danger);color:#fff}
+.pager{display:flex;justify-content:space-between;align-items:center;padding:11px 17px;border-top:1px solid var(--border);flex-wrap:wrap;gap:7px}
+.pg-info{font-size:.75rem;color:var(--muted)}.pg-btns{display:flex;gap:3px}
+.pb{min-width:31px;height:31px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);font-size:.8rem;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.pb:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+.pb.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:800}
+.pb:disabled{opacity:.35;cursor:not-allowed}
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(10,24,46,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;box-shadow:0 28px 90px rgba(0,0,0,.28);animation:slideUp .2s ease;max-height:90vh;overflow-y:auto}
+.modal-lg{max-width:640px}.modal-xl{max-width:760px}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.mh{padding:20px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.mh-title{font-size:.98rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px}
+.mc{width:28px;height:28px;border-radius:7px;border:none;background:var(--surface2);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:.15s}
+.mc:hover{background:var(--border)}.mb{padding:16px 22px}.fg{margin-bottom:13px}
+.fg label{display:block;font-size:.77rem;font-weight:800;color:var(--muted);margin-bottom:4px;letter-spacing:.03em}
+.fg input,.fg select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:.88rem;font-family:inherit;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,79,138,.1)}
+.fg input[readonly]{background:var(--surface2);color:var(--muted)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mf{padding:13px 22px 19px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border)}
+.msec{font-size:.69rem;font-weight:900;color:var(--primary);letter-spacing:.07em;text-transform:uppercase;padding:3px 0 8px;margin-top:4px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.cmodal{max-width:360px}.cicon{font-size:2.4rem;text-align:center;margin-bottom:8px}
+.cmsg{text-align:center;font-size:.88rem;color:var(--text);line-height:1.65}.cmsg strong{color:var(--danger)}
+#officerPage{display:none}
+.op-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;flex-wrap:wrap;gap:10px}
+.op-title{font-size:.96rem;font-weight:800;color:var(--text)}.op-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.grp-block{margin-bottom:17px;background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.grp-head{background:linear-gradient(90deg,var(--primary-dark),var(--primary));padding:12px 17px;display:flex;justify-content:space-between;align-items:center}
+.grp-head-title{font-size:.87rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.grp-badge{background:rgba(255,255,255,.18);color:#fff;font-size:.71rem;font-weight:700;padding:2px 9px;border-radius:20px}
+.officer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.officer-card{padding:12px 15px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:11px;transition:.15s}
+.officer-card:hover{background:#f5f8fd}
+.oc-avatar{width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:800;color:#fff;flex-shrink:0}
+.oc-info{flex:1;min-width:0}
+.oc-name{font-size:.84rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oc-detail{font-size:.73rem;color:var(--muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.oc-detail a{color:var(--primary);text-decoration:none}.oc-acts{display:flex;gap:4px;flex-shrink:0}
+.csv-drop{border:2px dashed var(--border);border-radius:10px;padding:26px 20px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfd}
+.csv-drop:hover,.csv-drop.dragover{border-color:var(--primary);background:#f0f5ff}
+.csv-drop-icon{font-size:1.9rem;margin-bottom:6px}
+.csv-drop-text{font-size:.84rem;color:var(--muted);line-height:1.6}
+.csv-drop-text strong{color:var(--primary)}
+.csv-prev-wrap{margin-top:12px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.csv-prev-head{padding:7px 13px;background:#f0f5fb;font-size:.73rem;font-weight:800;color:var(--muted);border-bottom:1px solid var(--border)}
+.csv-scroll{overflow-x:auto;max-height:150px;overflow-y:auto}
+.csv-scroll table{width:100%;border-collapse:collapse;font-size:.72rem;min-width:unset}
+.csv-scroll th{background:#e8f0fb;padding:5px 9px;text-align:left;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border)}
+.csv-scroll td{padding:4px 9px;border-bottom:1px solid #f1f5f9;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csv-map-sec{margin-top:12px}.csv-map-title{font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:8px}
+.csv-map-row{display:grid;grid-template-columns:120px 18px 1fr;gap:9px;align-items:center;margin-bottom:7px;font-size:.8rem}
+.csv-map-label{font-weight:700;color:var(--muted);font-size:.76rem}
+.csv-map-row select{padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:.78rem;font-family:inherit;outline:none}
+.csv-map-row select:focus{border-color:var(--primary)}
+.csv-st{padding:9px 13px;border-radius:7px;font-size:.8rem;font-weight:600;margin-top:9px;display:none}
+.csv-st.ok{background:#dcfce7;color:#15803d;display:block}
+.csv-st.err{background:#fee2e2;color:#b91c1c;display:block}
+.csv-st.info{background:#dbeafe;color:#1d4ed8;display:block}
+.info-box{padding:9px 13px;border-radius:8px;font-size:.77rem;line-height:1.7;margin-top:9px}
+.info-box.yellow{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.info-box.orange{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+#toastCont{position:fixed;bottom:18px;right:18px;z-index:9000;display:flex;flex-direction:column;gap:6px}
+.toast{background:var(--text);color:#fff;padding:10px 15px;border-radius:9px;font-size:.82rem;box-shadow:0 4px 18px rgba(0,0,0,.22);animation:fadeUp .22s ease;display:flex;align-items:center;gap:7px;min-width:200px}
+.toast.success{background:var(--success)}.toast.danger{background:var(--danger)}.toast.warn{background:var(--warn)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.empty-st{text-align:center;padding:50px 20px;color:var(--muted)}.empty-st div{font-size:2.5rem;margin-bottom:9px}
+.cpd-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(232,160,0,.15);border:1px solid rgba(232,160,0,.4);border-radius:30px;padding:2px 10px 2px 5px;margin-left:7px}
+.cpd-dot{width:18px;height:18px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:900;color:var(--primary-dark)}
+.cpd-txt{font-size:.7rem;font-weight:800;color:var(--accent);letter-spacing:.04em}
+@media(max-width:640px){.main{padding:13px}.topbar{padding:0 13px}.tb-sub{display:none}.frow{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}.login-card{padding:28px 20px}}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setupScreen">
+  <div class="setup-card">
+    <div class="setup-icon">⚙️</div>
+    <div class="setup-title">ตั้งค่าเชื่อมต่อ Google Sheets</div>
+    <div class="setup-sub">วาง Google Apps Script URL เพื่อเชื่อมต่อฐานข้อมูล<br><span style="font-size:.75rem">ทำครั้งเดียว — ระบบจะจำการตั้งค่าไว้ในเครื่องนี้</span></div>
+    <div class="setup-field">
+      <label>Google Apps Script URL</label>
+      <input type="url" id="scriptInput" placeholder="https://script.google.com/macros/s/...../exec">
+      <div class="setup-hint">ได้จาก Apps Script → Deploy → Manage deployments → Copy URL</div>
+    </div>
+    <div id="setupError"></div>
+    <button class="btn-setup" id="btnConnect" onclick="doConnect()">🔗 เชื่อมต่อ</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="lcard-logo">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="18" r="9" fill="#fff"/><path d="M24 27Q24 30 32 31Q40 30 40 27L40 29Q40 34 32 35Q24 34 24 29Z" fill="#fff"/><path d="M14 56Q14 40 32 38Q50 40 50 56Z" fill="#fff"/><path d="M32 38L27 44L32 47L37 44Z" fill="#e8a000"/><rect x="28" y="42" width="8" height="5" rx="1" fill="#e8a000"/><rect x="14" y="39" width="7" height="3" rx="1.5" fill="#e8a000"/><rect x="43" y="39" width="7" height="3" rx="1.5" fill="#e8a000"/><path d="M19 16Q19 8 32 8Q45 8 45 16" fill="#0f2d52"/><rect x="17" y="15" width="30" height="3" rx="1.5" fill="#091e3a"/><circle cx="32" cy="11" r="3" fill="#e8a000"/><circle cx="32" cy="11" r="1.5" fill="#fff"/></svg>
+    </div>
+    <div class="lcard-title">สำนักงานส่งเสริมสหกรณ์<br>กรุงเทพมหานคร พื้นที่ 1</div>
+    <div class="lcard-sub">ระบบจัดการข้อมูลเจ้าหน้าที่ส่งเสริมสหกรณ์ (สสพ.1)</div>
+    <div class="lfield"><label>ชื่อผู้ใช้งาน</label><input id="lu" type="text" placeholder="Username" autocomplete="username"></div>
+    <div class="lfield"><label>รหัสผ่าน</label><input id="lp" type="password" placeholder="Password" autocomplete="current-password"></div>
+    <div id="loginError"></div>
+    <button class="btn-login" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
+    <div class="login-change"><a onclick="changeURL()">⚙️ เปลี่ยน URL</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-logo">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="18" r="9" fill="#1a4f8a"/><path d="M24 27Q24 30 32 31Q40 30 40 27L40 29Q40 34 32 35Q24 34 24 29Z" fill="#1a4f8a"/><path d="M14 56Q14 40 32 38Q50 40 50 56Z" fill="#1a4f8a"/><path d="M32 38L27 44L32 47L37 44Z" fill="#e8a000"/><rect x="28" y="42" width="8" height="5" rx="1" fill="#e8a000"/><rect x="14" y="39" width="7" height="3" rx="1.5" fill="#e8a000"/><rect x="43" y="39" width="7" height="3" rx="1.5" fill="#e8a000"/><path d="M19 16Q19 8 32 8Q45 8 45 16" fill="#0f2d52"/><rect x="17" y="15" width="30" height="3" rx="1.5" fill="#091e3a"/><circle cx="32" cy="11" r="3" fill="#e8a000"/><circle cx="32" cy="11" r="1.5" fill="#fff"/></svg>
+    </div>
+    <div class="tb-text">
+      <div class="tb-title">Dashboard เจ้าหน้าที่ส่งเสริมสหกรณ์ <span class="cpd-badge"><span class="cpd-dot">C</span><span class="cpd-txt">CPD</span></span></div>
+      <div class="tb-sub">สสพ.1 · สำนักงานส่งเสริมสหกรณ์กรุงเทพมหานคร พื้นที่ 1</div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" id="tabCoop" onclick="switchTab('coop')">🏢 สหกรณ์</button>
+      <button class="nav-tab" id="tabOfficer" onclick="switchTab('officer')">👤 จัดการ จสส.</button>
+    </div>
+    <div class="tb-right">
+      <span id="syncIndicator"><span class="sync-dot" id="syncDot"></span><span id="syncLabel" style="font-size:.72rem;color:rgba(255,255,255,.75)">Sheets</span></span>
+      <button class="btn-topbar" onclick="refreshData()">🔄 โหลดใหม่</button>
+      <button class="btn-topbar" id="btnImportCSV" onclick="openImportModal()" style="display:none">📥 นำเข้า CSV</button>
+      <button class="btn-topbar" id="btnShare" onclick="shareFile()" style="display:none" title="สร้างไฟล์สำหรับแจกเจ้าหน้าที่">📤 แชร์</button>
+      <div class="tb-user">
+        <div class="tb-avatar" id="tbAvatar">A</div>
+        <div class="tb-uname" id="tbUname">admin</div>
+      </div>
+      <button class="btn-topbar" onclick="doLogout()">ออกจากระบบ</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="stats-row" id="statsRow"></div>
+    <!-- หน้าสหกรณ์ -->
+    <div id="coopPage">
+      <div class="toolbar">
+        <div class="sw"><span class="sw-icon">🔍</span><input type="text" id="searchInput" placeholder="ค้นหาชื่อสหกรณ์ / รหัส / เจ้าหน้าที่ / เบอร์..." oninput="applyFilter()"></div>
+        <select class="flt" id="fType" onchange="applyFilter()">
+          <option value="">ประเภทสหกรณ์ทั้งหมด</option>
+          <option>สหกรณ์ออมทรัพย์</option><option>สหกรณ์บริการ</option>
+          <option>สหกรณ์เครดิตยูเนี่ยน</option><option>สหกรณ์ร้านค้า</option>
+          <option>สหกรณ์การเกษตร</option><option>สหกรณ์ประมง</option>
+        </select>
+        <select class="flt" id="fGroup" onchange="applyFilter()">
+          <option value="">กลุ่มทั้งหมด</option>
+          <option>กลุ่มส่งเสริมสหกรณ์ 1</option><option>กลุ่มส่งเสริมสหกรณ์ 2</option>
+          <option>กลุ่มส่งเสริมสหกรณ์ 3</option><option>กลุ่มส่งเสริมสหกรณ์ 4</option>
+          <option>กลุ่มส่งเสริมสหกรณ์ 5</option><option>กลุ่มส่งเสริมสหกรณ์ 6</option>
+          <option>กลุ่มจัดตั้งและส่งเสริมสหกรณ์</option>
+          <option value="__unassigned__">ยังไม่กำหนดกลุ่ม</option>
+        </select>
+        <select class="flt" id="fOfficer" onchange="applyFilter()">
+          <option value="">เจ้าหน้าที่ทั้งหมด</option>
+          <option value="__none__">ยังไม่มีเจ้าหน้าที่</option>
+        </select>
+        <div class="tb-right-bar">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">📤 Export CSV</button>
+          <button class="btn btn-primary btn-sm" id="btnAdd" onclick="openAdd()" style="display:none">＋ เพิ่มสหกรณ์</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="tw-head">
+          <div class="tw-title">รายชื่อสหกรณ์ในความรับผิดชอบ สสพ.1</div>
+          <div class="tw-count" id="tableCount"></div>
+        </div>
+        <div class="tscroll">
+          <table><thead><tr>
+            <th class="td-no">#</th>
+            <th onclick="sortBy('Coop_ID')">รหัสสหกรณ์ <span class="si" id="s_Coop_ID"></span></th>
+            <th onclick="sortBy('Coop_Name')">ชื่อสหกรณ์ <span class="si" id="s_Coop_Name"></span></th>
+            <th onclick="sortBy('Type')">ประเภท <span class="si" id="s_Type"></span></th>
+            <th onclick="sortBy('Mu')">กลุ่ม <span class="si" id="s_Mu"></span></th>
+            <th onclick="sortBy('Officers')">ชื่อ จสส. <span class="si" id="s_Officers"></span></th>
+            <th onclick="sortBy('Phone_Officer')">เบอร์มือถือ <span class="si" id="s_Phone_Officer"></span></th>
+            <th>Gmail</th><th>จัดการ</th>
+          </tr></thead><tbody id="tableBody"></tbody></table>
+        </div>
+        <div class="pager"><div class="pg-info" id="pgInfo"></div><div class="pg-btns" id="pgBtns"></div></div>
+      </div>
+    </div>
+    <!-- หน้า จสส. -->
+    <div id="officerPage">
+      <div class="op-header">
+        <div><div class="op-title">👤 จัดการเจ้าหน้าที่ส่งเสริมสหกรณ์ (จสส.)</div><div class="op-sub" id="officerSummary"></div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="openImportOfficerModal()">📥 นำเข้า CSV จสส.</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddOfficer()">＋ เพิ่ม จสส. ใหม่</button>
+        </div>
+      </div>
+      <div id="officerGroupsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: แก้ไขสหกรณ์ -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="modalTitle">✏️ แก้ไขข้อมูลสหกรณ์</div><button class="mc" onclick="closeModal('editOverlay')">✕</button></div>
+    <div class="mb">
+      <div class="msec">📋 ข้อมูลสหกรณ์</div>
+      <div class="fg"><label>รหัสสหกรณ์</label><input type="text" id="fCoopID"></div>
+      <div class="fg"><label>ชื่อสหกรณ์</label><input type="text" id="fCoopName"></div>
+      <div class="fg"><label>ประเภทสหกรณ์</label>
+        <select id="fType2"><option>สหกรณ์ออมทรัพย์</option><option>สหกรณ์บริการ</option><option>สหกรณ์เครดิตยูเนี่ยน</option><option>สหกรณ์ร้านค้า</option><option>สหกรณ์การเกษตร</option><option>สหกรณ์ประมง</option></select>
+      </div>
+      <div class="msec">👤 เจ้าหน้าที่รับผิดชอบ</div>
+      <div class="frow">
+        <div class="fg"><label>กลุ่มส่งเสริมสหกรณ์</label>
+          <select id="fMu" onchange="updateOfficerDD()">
+            <option value="">-- เลือกกลุ่ม --</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 1</option><option>กลุ่มส่งเสริมสหกรณ์ 2</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 3</option><option>กลุ่มส่งเสริมสหกรณ์ 4</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 5</option><option>กลุ่มส่งเสริมสหกรณ์ 6</option>
+            <option>กลุ่มจัดตั้งและส่งเสริมสหกรณ์</option>
+          </select>
+        </div>
+        <div class="fg"><label>ชื่อ จสส.</label><select id="fOfficer2"><option value="">-- เลือกชื่อ จสส. --</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>📞 เบอร์มือถือ</label><input type="tel" id="fPhone" placeholder="08X-XXX-XXXX"></div>
+        <div class="fg"><label>✉️ Gmail</label><input type="email" id="fGmail" placeholder="example@gmail.com"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('editOverlay')">ยกเลิก</button><button class="btn btn-primary" onclick="saveRecord()">💾 บันทึก</button></div>
+  </div>
+</div>
+
+<!-- MODAL: ลบสหกรณ์ -->
+<div class="overlay" id="delOverlay">
+  <div class="modal cmodal">
+    <div class="mh"><div class="mh-title">⚠️ ยืนยันการลบ</div><button class="mc" onclick="closeModal('delOverlay')">✕</button></div>
+    <div class="mb"><div class="cicon">🗑️</div><div class="cmsg" id="delMsg"></div></div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('delOverlay')">ยกเลิก</button><button class="btn btn-danger" onclick="confirmDelete()">🗑️ ลบเลย</button></div>
+  </div>
+</div>
+
+<!-- MODAL: เพิ่ม/แก้ไข จสส. -->
+<div class="overlay" id="officerEditOverlay">
+  <div class="modal modal-lg">
+    <div class="mh"><div class="mh-title" id="officerModalTitle">➕ เพิ่ม จสส. ใหม่</div><button class="mc" onclick="closeModal('officerEditOverlay')">✕</button></div>
+    <div class="mb">
+      <div class="frow">
+        <div class="fg"><label>ชื่อ-สกุล จสส. *</label><input type="text" id="oName" placeholder="เช่น นางสาวสมใจ ใจดี"></div>
+        <div class="fg"><label>กลุ่มส่งเสริมสหกรณ์ *</label>
+          <select id="oGroup">
+            <option value="">-- เลือกกลุ่ม --</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 1</option><option>กลุ่มส่งเสริมสหกรณ์ 2</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 3</option><option>กลุ่มส่งเสริมสหกรณ์ 4</option>
+            <option>กลุ่มส่งเสริมสหกรณ์ 5</option><option>กลุ่มส่งเสริมสหกรณ์ 6</option>
+            <option>กลุ่มจัดตั้งและส่งเสริมสหกรณ์</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>📞 เบอร์มือถือ</label><input type="tel" id="oPhone" placeholder="08X-XXX-XXXX"></div>
+        <div class="fg"><label>✉️ Gmail</label><input type="email" id="oGmail" placeholder="example@gmail.com"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('officerEditOverlay')">ยกเลิก</button><button class="btn btn-primary" onclick="saveOfficer()">💾 บันทึก</button></div>
+  </div>
+</div>
+
+<!-- MODAL: ลบ จสส. -->
+<div class="overlay" id="delOfficerOverlay">
+  <div class="modal cmodal">
+    <div class="mh"><div class="mh-title">⚠️ ยืนยันการลบ</div><button class="mc" onclick="closeModal('delOfficerOverlay')">✕</button></div>
+    <div class="mb"><div class="cicon">🗑️</div><div class="cmsg" id="delOfficerMsg"></div></div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('delOfficerOverlay')">ยกเลิก</button><button class="btn btn-danger" onclick="confirmDeleteOfficer()">🗑️ ลบเลย</button></div>
+  </div>
+</div>
+
+<!-- MODAL: นำเข้า CSV สหกรณ์ -->
+<div class="overlay" id="importOverlay">
+  <div class="modal modal-xl">
+    <div class="mh"><div class="mh-title">📥 นำเข้าข้อมูลสหกรณ์จาก CSV</div><button class="mc" onclick="closeModal('importOverlay');resetCSV()">✕</button></div>
+    <div class="mb">
+      <div class="csv-drop" id="csvDrop" onclick="document.getElementById('csvFile').click()">
+        <div class="csv-drop-icon">📂</div>
+        <div class="csv-drop-text"><strong>คลิกเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br>รองรับ <code>.csv</code> UTF-8 / BOM</div>
+        <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(this,'coop')">
+      </div>
+      <div id="csvParseSection" style="display:none">
+        <div class="csv-prev-wrap" id="csvPreview"></div>
+        <div class="csv-map-sec"><div class="csv-map-title">🔗 จับคู่คอลัมน์</div><div id="csvMapRows"></div></div>
+        <div class="info-box orange">⚠️ ข้อมูลที่นำเข้าจะ <strong>เพิ่มต่อท้าย</strong> ไม่เขียนทับ</div>
+        <div class="csv-st" id="csvStatus"></div>
+      </div>
+      <div class="info-box yellow" style="margin-top:10px">💡 หัวคอลัมน์: <code>Coop_ID, Coop_Name, Type, Mu, Officers, Phone_Officer, Gmail_Officer</code></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="closeModal('importOverlay');resetCSV()">ปิด</button>
+      <button class="btn btn-success" id="btnDoImport" onclick="doImport('coop')" style="display:none">✅ นำเข้าข้อมูล</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: นำเข้า CSV จสส. -->
+<div class="overlay" id="importOfficerOverlay">
+  <div class="modal modal-lg">
+    <div class="mh"><div class="mh-title">📥 นำเข้ารายชื่อ จสส. จาก CSV</div><button class="mc" onclick="closeModal('importOfficerOverlay');resetOfficerCSV()">✕</button></div>
+    <div class="mb">
+      <div class="csv-drop" id="csvDropOff" onclick="document.getElementById('csvFileOff').click()">
+        <div class="csv-drop-icon">📂</div>
+        <div class="csv-drop-text"><strong>คลิกเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br><span style="font-size:.75rem;color:var(--muted)">หัวคอลัมน์: <code>Name, Group, Phone, Gmail</code></span></div>
+        <input type="file" id="csvFileOff" accept=".csv" style="display:none" onchange="handleCSV(this,'officer')">
+      </div>
+      <div id="csvOffParseSection" style="display:none">
+        <div class="csv-prev-wrap" id="csvOffPreview" style="margin-top:12px"></div>
+        <div class="csv-map-sec" style="margin-top:12px"><div class="csv-map-title">🔗 จับคู่คอลัมน์</div><div id="csvOffMapRows"></div></div>
+        <div class="info-box orange">⚠️ ข้อมูลที่นำเข้าจะ <strong>เพิ่มต่อท้าย</strong> ไม่เขียนทับ</div>
+        <div class="csv-st" id="csvOffStatus"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="closeModal('importOfficerOverlay');resetOfficerCSV()">ปิด</button>
+      <button class="btn btn-success" id="btnDoImportOff" onclick="doImport('officer')" style="display:none">✅ นำเข้า จสส.</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastCont"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const USERS = {admin:{pass:'admin123',role:'admin'},officer:{pass:'1234',role:'officer'}};
+const URL_KEY = 'ssp1_url_v1';
+
+// ██ admin: วาง Script URL ตรงนี้ก่อนแจกไฟล์ ██
+// เมื่อ URL ว่าง → แสดงหน้า Setup ให้กรอก
+const PRESET_URL = '';
+
+const GROUP_OFFICERS = {
+  'กลุ่มส่งเสริมสหกรณ์ 1':['นางธัญภา สกุลศรีจินดา'],
+  'กลุ่มส่งเสริมสหกรณ์ 2':['นายนัทดนัย เปี่ยมเจียก'],
+  'กลุ่มส่งเสริมสหกรณ์ 3':['นางสาวขนิษฐา พรานเนื้อ'],
+  'กลุ่มส่งเสริมสหกรณ์ 4':['นางสาวนุจรินทร์ ศรีคุณเมือง'],
+  'กลุ่มส่งเสริมสหกรณ์ 5':['นางสาวสุลีวัลย์ สุยาละ'],
+  'กลุ่มส่งเสริมสหกรณ์ 6':['นางสาวทิพากร ทรงม่วง'],
+  'กลุ่มจัดตั้งและส่งเสริมสหกรณ์':[
+    'นางสาวศิริลักษ์ ครุฑใจกล้า','นางสาวนวลศรี เพชรไพสิฐ','นางสาวชนิดา วงษ์แก้ว',
+    'นางสาวดาราวรรณ มีบริบูรณ์','นายโสฬส เจริญพูล','นางสาวธนิดา รัตนวิจิตร',
+    'นายคึกฤทธิ์ อินทันแก้ว','นายปัญญพัฒน์ ศรีสวัสดิ์','นางสาวรัฐติพร กีหงษ์',
+    'นางสาวอรรยา ขันถม','นายสุทธินันท์ บุษราประภากูล','นางสาวกรองขวัญ ช้างสัมฤทธิ์',
+    'นางสาวกานต์สินี ธีระสิงห์','นางสาวอภิชญา สิทธิศักดิ์','นางสาวปิยะพร นิมาดร',
+    'นางสาวนิธิกานต์ จ่าราช','นายอิสรา ไทรงาม','นายวรทัศน์ เทียมสุวรรณ์',
+    'นายรัชพล หอมเหมือน','นางสาวกวินา ฉัตรชาตรี','นางสาวปิยาภรณ์ คงพูล',
+    'นางสาวสุชานันท์ เปลี่ยนสินไชย','นายนิทัต สุขสุสร','นางสุนีย์ คำมา',
+    'นางสาวศิวพร เหลืองอร่าม','นายเรืองชัย โพนพุฒ'
+  ]
+};
+
+const COOP_FIELDS = [
+  {key:'Coop_ID',label:'รหัสสหกรณ์'},{key:'Coop_Name',label:'ชื่อสหกรณ์'},
+  {key:'Type',label:'ประเภท'},{key:'Mu',label:'กลุ่มส่งเสริม'},
+  {key:'Officers',label:'ชื่อ จสส.'},{key:'Phone_Officer',label:'เบอร์มือถือ'},
+  {key:'Gmail_Officer',label:'Gmail'},
+];
+const OFF_FIELDS = [
+  {key:'Name',label:'ชื่อ-สกุล จสส.'},{key:'Group',label:'กลุ่มส่งเสริม'},
+  {key:'Phone',label:'เบอร์มือถือ'},{key:'Gmail',label:'Gmail'},
+];
+
+// ── state ──
+let scriptURL = PRESET_URL || localStorage.getItem(URL_KEY) || '';
+let rawData = [], officerData = [], filteredData = [];
+let sortField = '', sortAsc = true, editIdx = -1, deleteIdx = -1, curPage = 1;
+let currentUser = null, currentTab = 'coop';
+let editOfficerKey = null, editOfficerOrigGrp = null, deleteOfficerKey = null;
+const PAGE_SIZE = 20;
+let ALL_OFFICERS = Object.values(GROUP_OFFICERS).flat();
+
+// ══════════════════════════════════════════════
+// SETUP & URL
+// ══════════════════════════════════════════════
+function boot() {
+  if (scriptURL) {
+    document.getElementById('setupScreen').classList.add('hide');
+    loadAndShowLogin();
+  }
+  // ถ้าไม่มี URL → แสดง Setup screen อยู่แล้ว (default)
+}
+
+async function doConnect() {
+  const url = document.getElementById('scriptInput').value.trim();
+  const err = document.getElementById('setupError');
+  const btn = document.getElementById('btnConnect');
+  if (!url.startsWith('https://script.google.com')) {
+    err.textContent = '❌ URL ต้องขึ้นต้นด้วย https://script.google.com';
+    return;
+  }
+  err.textContent = '⏳ กำลังทดสอบการเชื่อมต่อ...';
+  btn.disabled = true;
+  try {
+    scriptURL = url;
+    const data = await apiGet('getAll');
+    localStorage.setItem(URL_KEY, url);
+    err.textContent = '';
+    document.getElementById('setupScreen').classList.add('hide');
+    applySheetData(data);
+    document.getElementById('loginScreen').classList.add('show');
+    showToast('✅ เชื่อมต่อสำเร็จ', 'success');
+  } catch(e) {
+    err.textContent = '❌ ' + e.message;
+    scriptURL = '';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function changeURL() {
+  localStorage.removeItem(URL_KEY);
+  scriptURL = '';
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('setupScreen').classList.remove('hide');
+  document.getElementById('scriptInput').value = '';
+  document.getElementById('setupError').textContent = '';
+}
+
+async function loadAndShowLogin() {
+  setSyncState('loading');
+  try {
+    const data = await apiGet('getAll');
+    applySheetData(data);
+    setSyncState('ok');
+  } catch(e) {
+    setSyncState('error');
+    showToast('⚠️ โหลดจาก Sheets ไม่ได้', 'warn');
+  }
+  document.getElementById('loginScreen').classList.add('show');
+}
+
+function applySheetData(data) {
+  if (data.coops && data.coops.length > 0) rawData = data.coops;
+  else rawData = [];
+  if (data.officers && data.officers.length > 0) {
+    officerData = data.officers;
+    syncOfficers();
+  }
+}
+
+function syncOfficers() {
+  if (!officerData.length) return;
+  Object.keys(GROUP_OFFICERS).forEach(k => { GROUP_OFFICERS[k] = []; });
+  ALL_OFFICERS.length = 0;
+  officerData.forEach(o => {
+    if (!o.Name || !o.Group) return;
+    if (!GROUP_OFFICERS[o.Group]) GROUP_OFFICERS[o.Group] = [];
+    if (!GROUP_OFFICERS[o.Group].includes(o.Name)) GROUP_OFFICERS[o.Group].push(o.Name);
+    if (!ALL_OFFICERS.includes(o.Name)) ALL_OFFICERS.push(o.Name);
+  });
+}
+
+// ══════════════════════════════════════════════
+// API — JSONP GET (แก้ CORS)
+// ══════════════════════════════════════════════
+function setSyncState(s) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (s==='loading'?' loading':s==='error'?' err':'');
+  lbl.textContent = s==='loading'?'กำลังซิงค์...':s==='error'?'ออฟไลน์':'Sheets ✓';
+}
+
+function jsonpGet(url) {
+  return new Promise((resolve, reject) => {
+    const cb = '_cb' + Date.now() + Math.random().toString(36).slice(2);
+    const t  = setTimeout(() => {
+      delete window[cb];
+      if (s.parentNode) s.parentNode.removeChild(s);
+      reject(new Error('Timeout — ตรวจสอบ URL และ Deploy settings'));
+    }, 15000);
+    window[cb] = d => {
+      clearTimeout(t); delete window[cb];
+      if (s.parentNode) s.parentNode.removeChild(s);
+      d.ok ? resolve(d.data) : reject(new Error(d.error));
+    };
+    const s = document.createElement('script');
+    s.src = url + (url.includes('?')?'&':'?') + 'callback=' + cb;
+    s.onerror = () => { clearTimeout(t); delete window[cb]; reject(new Error('โหลด Script ไม่ได้')); };
+    document.head.appendChild(s);
+  });
+}
+
+function apiGet(action) {
+  return jsonpGet(scriptURL + '?action=' + action);
+}
+
+function chunkArr(arr, n) {
+  const out = [];
+  for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i+n));
+  return out;
+}
+
+async function apiPost(action, payload) {
+  setSyncState('loading');
+  try {
+    const data = JSON.stringify(payload);
+    if (data.length > 6000) {
+      const chunks = chunkArr(payload, 40);
+      // map initCoops→saveCoops, initOfficers→saveOfficer per row
+      const batchAction = action.startsWith('init') ?
+        (action==='initCoops'?'saveCoops':'saveOfficers') : action;
+      for (const chunk of chunks) {
+        await jsonpGet(scriptURL + '?action=' + batchAction + '&payload=' + encodeURIComponent(JSON.stringify(chunk)));
+      }
+    } else {
+      await jsonpGet(scriptURL + '?action=' + action + '&payload=' + encodeURIComponent(data));
+    }
+    setSyncState('ok');
+    return {ok:true};
+  } catch(e) {
+    setSyncState('error');
+    throw e;
+  }
+}
+
+async function refreshData() {
+  setSyncState('loading');
+  try {
+    const data = await apiGet('getAll');
+    applySheetData(data);
+    applyFilter();
+    if (currentTab==='officer') renderOfficerPage();
+    setSyncState('ok');
+    showToast('🔄 โหลดข้อมูลใหม่แล้ว','success');
+  } catch(e) { setSyncState('error'); showToast('❌ โหลดไม่ได้: '+e.message,'danger'); }
+}
+
+// ══════════════════════════════════════════════
+// SHARE — สร้างไฟล์ที่มี URL ฝังไว้
+// ══════════════════════════════════════════════
+async function shareFile() {
+  try {
+    const res = await fetch(window.location.href);
+    let html = await res.text();
+    html = html.replace(/const PRESET_URL = '';/, `const PRESET_URL = '${scriptURL}';`);
+    if (!html.includes(scriptURL)) throw new Error('แทน URL ไม่สำเร็จ');
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'dashboard_ssp1_staff.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    showToast('📥 ดาวน์โหลดไฟล์สำหรับแจกเจ้าหน้าที่แล้ว','success');
+  } catch(e) {
+    // fallback: outerHTML
+    let html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+    html = html.replace(/const PRESET_URL = '';/, `const PRESET_URL = '${scriptURL}';`);
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'dashboard_ssp1_staff.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    showToast('📥 ดาวน์โหลดไฟล์แล้ว','success');
+  }
+}
+
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value.trim();
+  const err = document.getElementById('loginError');
+  if (!u||!p){err.textContent='กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';return;}
+  const usr = USERS[u];
+  if (!usr||usr.pass!==p){err.textContent='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';return;}
+  currentUser = {name:u,role:usr.role};
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('app').classList.add('show');
+  document.getElementById('tbAvatar').textContent = u[0].toUpperCase();
+  document.getElementById('tbUname').textContent = u;
+  if (usr.role==='admin') {
+    document.getElementById('btnAdd').style.display = '';
+    document.getElementById('btnImportCSV').style.display = '';
+    document.getElementById('btnShare').style.display = '';
+  }
+  buildOfficerFilter();
+  applyFilter();
+}
+function doLogout() {
+  currentUser = null;
+  document.getElementById('loginScreen').classList.add('show');
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('lu').value=''; document.getElementById('lp').value='';
+  document.getElementById('loginError').textContent='';
+  ['btnAdd','btnImportCSV','btnShare'].forEach(id=>document.getElementById(id).style.display='none');
+  switchTab('coop');
+}
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ══════════════════════════════════════════════
+// TAB
+// ══════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('coopPage').style.display = tab==='coop'?'block':'none';
+  document.getElementById('officerPage').style.display = tab==='officer'?'block':'none';
+  document.getElementById('tabCoop').classList.toggle('active',tab==='coop');
+  document.getElementById('tabOfficer').classList.toggle('active',tab==='officer');
+  if (tab==='officer') renderOfficerPage();
+}
+
+// ══════════════════════════════════════════════
+// DROPDOWN
+// ══════════════════════════════════════════════
+function buildOfficerFilter() {
+  const sel = document.getElementById('fOfficer');
+  sel.innerHTML = '<option value="">เจ้าหน้าที่ทั้งหมด</option><option value="__none__">ยังไม่มีเจ้าหน้าที่</option>';
+  ALL_OFFICERS.forEach(o => { const op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op); });
+}
+function updateOfficerDD() {
+  const grp = document.getElementById('fMu').value;
+  const sel = document.getElementById('fOfficer2');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">-- เลือกชื่อ จสส. --</option>';
+  const list = grp ? (GROUP_OFFICERS[grp]||[]) : ALL_OFFICERS;
+  list.forEach(o => { const op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op); });
+  if (prev && list.includes(prev)) sel.value = prev;
+}
+
+// ══════════════════════════════════════════════
+// BADGE + STATS
+// ══════════════════════════════════════════════
+function badgeClass(t) {
+  if(t.includes('ออมทรัพย์'))return'b-sav';if(t.includes('บริการ'))return'b-ser';
+  if(t.includes('เครดิต'))return'b-cre';if(t.includes('ร้านค้า'))return'b-sto';
+  if(t.includes('การเกษตร'))return'b-agr';if(t.includes('ประมง'))return'b-fis';return'';
+}
+function renderStats() {
+  const total=rawData.length, assigned=rawData.filter(r=>r.Officers).length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="sc"><div class="sc-icon ic-blue">🏢</div><div><div class="sc-num">${total}</div><div class="sc-label">สหกรณ์ทั้งหมด</div></div></div>
+    <div class="sc c-green"><div class="sc-icon ic-green">✅</div><div><div class="sc-num">${assigned}</div><div class="sc-label">มีเจ้าหน้าที่แล้ว</div></div></div>
+    <div class="sc c-warn"><div class="sc-icon ic-warn">⏳</div><div><div class="sc-num">${total-assigned}</div><div class="sc-label">ยังไม่มีเจ้าหน้าที่</div></div></div>
+    <div class="sc c-gold"><div class="sc-icon ic-gold">👥</div><div><div class="sc-num">${Object.keys(GROUP_OFFICERS).length}</div><div class="sc-label">กลุ่มส่งเสริมสหกรณ์</div></div></div>
+    <div class="sc c-red"><div class="sc-icon ic-red">👤</div><div><div class="sc-num">${ALL_OFFICERS.length}</div><div class="sc-label">เจ้าหน้าที่ส่งเสริมสหกรณ์</div></div></div>`;
+}
+
+// ══════════════════════════════════════════════
+// FILTER / TABLE
+// ══════════════════════════════════════════════
+function applyFilterKeepPage() {
+  const savedPage = curPage;
+  applyFilter();
+  // ถ้าหน้าที่บันทึกยังมีข้อมูล ให้กลับไปหน้านั้น
+  const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+  if (savedPage <= totalPages && savedPage > 0) {
+    curPage = savedPage;
+    renderTable();
+  }
+}
+
+function applyFilter() {
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const ft=document.getElementById('fType').value;
+  const fg=document.getElementById('fGroup').value;
+  const fo=document.getElementById('fOfficer').value;
+  filteredData=rawData.filter(r=>{
+    const mq=!q||(r.Coop_Name||'').toLowerCase().includes(q)||(r.Coop_ID||'').includes(q)||(r.Officers||'').toLowerCase().includes(q)||(r.Phone_Officer||'').includes(q);
+    const mt=!ft||r.Type===ft;
+    let mg=true; if(fg==='__unassigned__')mg=!r.Mu;else if(fg)mg=r.Mu===fg;
+    const mo=!fo||(fo==='__none__'?!r.Officers:r.Officers===fo);
+    return mq&&mt&&mg&&mo;
+  });
+  if(sortField){filteredData.sort((a,b)=>{const av=(a[sortField]||'').toString().toLowerCase(),bv=(b[sortField]||'').toString().toLowerCase();return sortAsc?av.localeCompare(bv,'th'):bv.localeCompare(av,'th');});}
+  curPage=1; renderStats(); renderTable();
+}
+function sortBy(field){
+  if(sortField===field)sortAsc=!sortAsc;else{sortField=field;sortAsc=true;}
+  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted'));
+  const el=document.getElementById('s_'+field);
+  if(el){el.closest('th').classList.add('sorted');el.textContent=sortAsc?'▲':'▼';}
+  applyFilter();
+}
+function renderTable(){
+  const start=(curPage-1)*PAGE_SIZE,end=start+PAGE_SIZE,page=filteredData.slice(start,end);
+  const tbody=document.getElementById('tableBody');
+  document.getElementById('tableCount').textContent=`แสดง ${filteredData.length} รายการ จากทั้งหมด ${rawData.length} สหกรณ์`;
+  if(!page.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-st"><div>🔍</div><p>ไม่พบข้อมูล</p></div></td></tr>`;renderPager();return;}
+  const isAdmin=currentUser&&currentUser.role==='admin';
+  tbody.innerHTML=page.map((r,i)=>{
+    const gi=rawData.indexOf(r);
+    const phone=r.Phone_Officer?`<a href="tel:${r.Phone_Officer}" style="color:var(--primary);font-size:.82rem;text-decoration:none">📞 ${r.Phone_Officer}</a>`:`<span style="color:var(--light)">—</span>`;
+    const gmail=r.Gmail_Officer?`<a href="mailto:${r.Gmail_Officer}" style="color:var(--primary);font-size:.77rem">${r.Gmail_Officer}</a>`:`<span style="color:var(--light)">—</span>`;
+    const acts=isAdmin?`<button class="ab ab-edit" onclick="openEdit(${gi})">✏️</button><button class="ab ab-del" onclick="openDelete(${gi})">🗑️</button>`:`<button class="ab ab-edit" onclick="openEdit(${gi})">✏️</button>`;
+    return `<tr><td class="td-no">${start+i+1}</td><td class="td-id">${r.Coop_ID}</td><td class="td-name">${r.Coop_Name}</td><td><span class="badge ${badgeClass(r.Type)}">${r.Type}</span></td><td class="td-grp ${r.Mu?'':'ec'}">${r.Mu||'—'}</td><td class="${r.Officers?'':'ec'}">${r.Officers||'ยังไม่กำหนด'}</td><td>${phone}</td><td>${gmail}</td><td class="td-act">${acts}</td></tr>`;
+  }).join('');
+  renderPager();
+}
+function renderPager(){
+  const total=filteredData.length,pages=Math.ceil(total/PAGE_SIZE);
+  const s=(curPage-1)*PAGE_SIZE+1,e=Math.min(curPage*PAGE_SIZE,total);
+  document.getElementById('pgInfo').textContent=total?`แสดง ${s}–${e} จาก ${total} รายการ`:'ไม่พบข้อมูล';
+  const cont=document.getElementById('pgBtns');
+  if(pages<=1){cont.innerHTML='';return;}
+  let b=`<button class="pb" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=pages;p++){if(pages>7&&p>3&&p<pages-2&&Math.abs(p-curPage)>1){if(p===4||p===pages-3)b+=`<button class="pb" disabled>…</button>`;continue;}b+=`<button class="pb ${p===curPage?'active':''}" onclick="goPage(${p})">${p}</button>`;}
+  b+=`<button class="pb" onclick="goPage(${curPage+1})" ${curPage===pages?'disabled':''}>›</button>`;
+  cont.innerHTML=b;
+}
+function goPage(p){curPage=p;renderTable();}
+
+// ══════════════════════════════════════════════
+// COOP CRUD
+// ══════════════════════════════════════════════
+function openAdd(){
+  editIdx=-1;document.getElementById('modalTitle').textContent='➕ เพิ่มสหกรณ์ใหม่';
+  document.getElementById('fCoopID').readOnly=false;
+  ['fCoopID','fCoopName','fPhone','fGmail'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fType2').value='สหกรณ์ออมทรัพย์';
+  document.getElementById('fMu').value='';updateOfficerDD();document.getElementById('fOfficer2').value='';
+  document.getElementById('editOverlay').classList.add('show');
+}
+function openEdit(idx){
+  editIdx=idx;const r=rawData[idx];
+  document.getElementById('modalTitle').textContent='✏️ แก้ไขข้อมูลสหกรณ์';
+  document.getElementById('fCoopID').readOnly=true;
+  document.getElementById('fCoopID').value=r.Coop_ID;document.getElementById('fCoopName').value=r.Coop_Name;
+  document.getElementById('fType2').value=r.Type;document.getElementById('fMu').value=r.Mu||'';updateOfficerDD();
+  document.getElementById('fOfficer2').value=r.Officers||'';
+  document.getElementById('fPhone').value=r.Phone_Officer||'';document.getElementById('fGmail').value=r.Gmail_Officer||'';
+  document.getElementById('editOverlay').classList.add('show');
+}
+async function saveRecord(){
+  const id=document.getElementById('fCoopID').value.trim();
+  const name=document.getElementById('fCoopName').value.trim();
+  if(!name){showToast('กรุณากรอกชื่อสหกรณ์','warn');return;}
+  if(editIdx===-1&&!id){showToast('กรุณากรอกรหัสสหกรณ์','warn');return;}
+  const rec={Coop_ID:id,Coop_Name:name,Type:document.getElementById('fType2').value,Mu:document.getElementById('fMu').value,Officers:document.getElementById('fOfficer2').value,Phone_Officer:document.getElementById('fPhone').value.trim(),Gmail_Officer:document.getElementById('fGmail').value.trim()};
+  try{
+    await apiPost('saveCoop',rec);
+    if(editIdx===-1){rawData.push(rec);showToast('✅ เพิ่มสหกรณ์สำเร็จ','success');}
+    else{rawData[editIdx]=rec;showToast('✅ บันทึกสำเร็จ','success');}
+    closeModal('editOverlay');applyFilterKeepPage();
+  }catch(e){showToast('❌ '+e.message,'danger');}
+}
+function openDelete(idx){deleteIdx=idx;document.getElementById('delMsg').innerHTML=`ลบ<br><strong>${rawData[idx].Coop_Name}</strong>?`;document.getElementById('delOverlay').classList.add('show');}
+async function confirmDelete(){
+  if(deleteIdx<0)return;
+  try{await apiPost('deleteCoop',{Coop_ID:rawData[deleteIdx].Coop_ID});rawData.splice(deleteIdx,1);closeModal('delOverlay');applyFilterKeepPage();showToast('🗑️ ลบแล้ว','danger');deleteIdx=-1;}
+  catch(e){showToast('❌ '+e.message,'danger');}
+}
+
+// ══════════════════════════════════════════════
+// OFFICER PAGE
+// ══════════════════════════════════════════════
+function getInitial(n){const m=n.match(/[ก-๙]/);return m?m[0]:n[0]||'?';}
+function getOfficerInfo(n){return officerData.find(o=>o.Name===n)||{Name:n,Group:'',Phone:'',Gmail:''};}
+
+function renderOfficerPage(){
+  const withPhone=ALL_OFFICERS.filter(n=>getOfficerInfo(n).Phone).length;
+  document.getElementById('officerSummary').textContent=`จสส. ทั้งหมด ${ALL_OFFICERS.length} คน · มีเบอร์มือถือ ${withPhone} คน`;
+  const cont=document.getElementById('officerGroupsContainer');cont.innerHTML='';
+  Object.entries(GROUP_OFFICERS).forEach(([grpName,names])=>{
+    const block=document.createElement('div');block.className='grp-block';
+    const cards=names.map(name=>{
+      const d=getOfficerInfo(name);
+      const ph=d.Phone?`<a href="tel:${d.Phone}">📞 ${d.Phone}</a>`:'<span style="color:var(--light)">ยังไม่มีเบอร์</span>';
+      const gm=d.Gmail?`· <a href="mailto:${d.Gmail}">✉️ ${d.Gmail}</a>`:'';
+      return `<div class="officer-card"><div class="oc-avatar">${getInitial(name)}</div><div class="oc-info"><div class="oc-name">${name}</div><div class="oc-detail">${ph} ${gm}</div></div><div class="oc-acts"><button class="ab ab-edit" onclick="openEditOfficer(this)" data-grp="${grpName}" data-name="${name}">✏️</button><button class="ab ab-del" onclick="openDeleteOfficer(this)" data-grp="${grpName}" data-name="${name}">🗑️</button></div></div>`;
+    }).join('');
+    block.innerHTML=`<div class="grp-head"><div class="grp-head-title">👥 ${grpName} <span class="grp-badge">${names.length} คน</span></div></div><div class="officer-grid">${cards}</div>`;
+    cont.appendChild(block);
+  });
+}
+function openAddOfficer(){editOfficerKey=null;document.getElementById('officerModalTitle').textContent='➕ เพิ่ม จสส. ใหม่';['oName','oPhone','oGmail'].forEach(id=>document.getElementById(id).value='');document.getElementById('oName').readOnly=false;document.getElementById('oGroup').value='';document.getElementById('officerEditOverlay').classList.add('show');}
+function openEditOfficer(el){
+  const grp=el.dataset.grp,name=el.dataset.name;
+  editOfficerKey=name;editOfficerOrigGrp=grp;
+  document.getElementById('officerModalTitle').textContent='✏️ แก้ไขข้อมูล จสส.';
+  document.getElementById('oName').value=name;document.getElementById('oName').readOnly=true;
+  document.getElementById('oGroup').value=grp;
+  const d=getOfficerInfo(name);
+  document.getElementById('oPhone').value=d.Phone||'';document.getElementById('oGmail').value=d.Gmail||'';
+  document.getElementById('officerEditOverlay').classList.add('show');
+}
+async function saveOfficer(){
+  const name=document.getElementById('oName').value.trim();
+  const newGrp=document.getElementById('oGroup').value;
+  const phone=document.getElementById('oPhone').value.trim();
+  const gmail=document.getElementById('oGmail').value.trim();
+  if(!name){showToast('กรุณากรอกชื่อ จสส.','warn');return;}
+  if(!newGrp){showToast('กรุณาเลือกกลุ่ม','warn');return;}
+  try{
+    await apiPost('saveOfficer',{Name:name,Group:newGrp,Phone:phone,Gmail:gmail});
+    if(editOfficerKey===null){
+      if(!GROUP_OFFICERS[newGrp])GROUP_OFFICERS[newGrp]=[];
+      if(!GROUP_OFFICERS[newGrp].includes(name)){GROUP_OFFICERS[newGrp].push(name);ALL_OFFICERS.push(name);}
+    } else {
+      const oldGrp=editOfficerOrigGrp||Object.keys(GROUP_OFFICERS).find(g=>GROUP_OFFICERS[g].includes(editOfficerKey));
+      if(oldGrp&&oldGrp!==newGrp){
+        GROUP_OFFICERS[oldGrp]=GROUP_OFFICERS[oldGrp].filter(n=>n!==editOfficerKey);
+        if(!GROUP_OFFICERS[newGrp])GROUP_OFFICERS[newGrp]=[];
+        GROUP_OFFICERS[newGrp].push(name);
+        const ai=ALL_OFFICERS.indexOf(editOfficerKey);if(ai>=0)ALL_OFFICERS[ai]=name;
+        rawData.forEach(r=>{if(r.Officers===editOfficerKey){r.Officers=name;r.Mu=newGrp;}});
+      }
+    }
+    const oi=officerData.findIndex(o=>o.Name===editOfficerKey);
+    const rec={Name:name,Group:newGrp,Phone:phone,Gmail:gmail};
+    if(oi>=0)officerData[oi]=rec;else officerData.push(rec);
+    buildOfficerFilter();closeModal('officerEditOverlay');document.getElementById('oName').readOnly=false;
+    renderOfficerPage();applyFilter();
+    showToast(editOfficerKey===null?'✅ เพิ่ม จสส. สำเร็จ':'✅ บันทึกสำเร็จ','success');
+  }catch(e){showToast('❌ '+e.message,'danger');}
+}
+function openDeleteOfficer(el){deleteOfficerKey=el.dataset.name;document.getElementById('delOfficerMsg').innerHTML=`ลบ<br><strong>${el.dataset.name}</strong>?`;document.getElementById('delOfficerOverlay').classList.add('show');}
+async function confirmDeleteOfficer(){
+  if(!deleteOfficerKey)return;
+  try{
+    await apiPost('deleteOfficer',{Name:deleteOfficerKey});
+    Object.keys(GROUP_OFFICERS).forEach(g=>{GROUP_OFFICERS[g]=GROUP_OFFICERS[g].filter(n=>n!==deleteOfficerKey);});
+    const ai=ALL_OFFICERS.indexOf(deleteOfficerKey);if(ai>=0)ALL_OFFICERS.splice(ai,1);
+    officerData=officerData.filter(o=>o.Name!==deleteOfficerKey);
+    closeModal('delOfficerOverlay');buildOfficerFilter();renderOfficerPage();
+    showToast('🗑️ ลบ จสส. สำเร็จ','danger');deleteOfficerKey=null;
+  }catch(e){showToast('❌ '+e.message,'danger');}
+}
+
+// ══════════════════════════════════════════════
+// CSV IMPORT
+// ══════════════════════════════════════════════
+let csvParsed={coop:{headers:[],rows:[]},officer:{headers:[],rows:[]}};
+
+function openImportModal(){resetCSV();document.getElementById('importOverlay').classList.add('show');}
+function openImportOfficerModal(){resetOfficerCSV();document.getElementById('importOfficerOverlay').classList.add('show');}
+function resetCSV(){csvParsed.coop={headers:[],rows:[]};document.getElementById('csvParseSection').style.display='none';document.getElementById('btnDoImport').style.display='none';document.getElementById('csvFile').value='';document.getElementById('csvStatus').className='csv-st';}
+function resetOfficerCSV(){csvParsed.officer={headers:[],rows:[]};document.getElementById('csvOffParseSection').style.display='none';document.getElementById('btnDoImportOff').style.display='none';document.getElementById('csvFileOff').value='';document.getElementById('csvOffStatus').className='csv-st';}
+
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length)return{headers:[],rows:[]};
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/^["]|["]$/g,''));
+  const rows=lines.slice(1).map(line=>{
+    const cells=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){if(line[i]==='"'){inQ=!inQ;}else if(line[i]===','&&!inQ){cells.push(cur.trim());cur='';}else cur+=line[i];}
+    cells.push(cur.trim());return cells;
+  }).filter(r=>r.some(c=>c));
+  return{headers,rows};
+}
+
+function handleCSV(input,type){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const parsed=parseCSV(e.target.result);
+    const fields=type==='coop'?COOP_FIELDS:OFF_FIELDS;
+    csvParsed[type]=parsed;
+    const {headers,rows}=parsed;
+    const shown=rows.slice(0,5);
+    const prevId=type==='coop'?'csvPreview':'csvOffPreview';
+    const mapId=type==='coop'?'csvMapRows':'csvOffMapRows';
+    const secId=type==='coop'?'csvParseSection':'csvOffParseSection';
+    const btnId=type==='coop'?'btnDoImport':'btnDoImportOff';
+    const stId=type==='coop'?'csvStatus':'csvOffStatus';
+    document.getElementById(prevId).innerHTML=`<div class="csv-prev-head">ตัวอย่าง ${shown.length} แถว จาก ${rows.length} แถว</div><div class="csv-scroll"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${shown.map(r=>`<tr>${headers.map((_,i)=>`<td>${r[i]||''}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    document.getElementById(mapId).innerHTML=fields.map(f=>{
+      const guess=headers.findIndex(h=>h.toLowerCase().replace(/[ _]/g,'')=== f.key.toLowerCase().replace(/[ _]/g,'')||h.toLowerCase().includes(f.label.toLowerCase().slice(0,4)));
+      const opts=[`<option value=""${guess<0?' selected':''}>(ไม่นำเข้า)</option>`,...headers.map((h,i)=>`<option value="${i}"${i===guess?' selected':''}>${h}</option>`)].join('');
+      return `<div class="csv-map-row"><span class="csv-map-label">${f.label}</span><span style="color:var(--light);text-align:center">→</span><select data-field="${f.key}">${opts}</select></div>`;
+    }).join('');
+    document.getElementById(secId).style.display='block';
+    document.getElementById(btnId).style.display='inline-flex';
+    const st=document.getElementById(stId);st.className='csv-st info';st.textContent=`พบ ${rows.length} แถว`;
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+async function doImport(type){
+  const mapId=type==='coop'?'csvMapRows':'csvOffMapRows';
+  const stId=type==='coop'?'csvStatus':'csvOffStatus';
+  const btnId=type==='coop'?'btnDoImport':'btnDoImportOff';
+  const maps={};
+  document.querySelectorAll('#'+mapId+' select').forEach(s=>{if(s.value!=='')maps[s.dataset.field]=parseInt(s.value);});
+  const keyField=type==='coop'?'Coop_ID':'Name';
+  if(maps[keyField]===undefined){showToast('กรุณาจับคู่คอลัมน์หลักอย่างน้อย','warn');return;}
+  const defaultRec=type==='coop'?{Coop_ID:'',Coop_Name:'',Type:'',Mu:'',Officers:'',Phone_Officer:'',Gmail_Officer:''}:{Name:'',Group:'',Phone:'',Gmail:''};
+  const rows=csvParsed[type].rows.map(row=>{
+    const rec={...defaultRec};
+    Object.entries(maps).forEach(([k,i])=>{rec[k]=(row[i]||'').trim();});
+    return rec;
+  }).filter(r=>r[keyField]);
+  if(!rows.length){showToast('ไม่พบข้อมูลที่นำเข้าได้','warn');return;}
+  const btn=document.getElementById(btnId);btn.disabled=true;btn.textContent='⏳ กำลังบันทึก...';
+  try{
+    const action=type==='coop'?'saveCoops':'saveOfficer';
+    if(type==='coop'){
+      await apiPost('saveCoops',rows);
+      rawData=[...rawData,...rows];
+    } else {
+      for(const row of rows){
+        await apiPost('saveOfficer',row);
+        const oi=officerData.findIndex(o=>o.Name===row.Name);
+        if(oi>=0)officerData[oi]=row;else officerData.push(row);
+        if(row.Group){
+          if(!GROUP_OFFICERS[row.Group])GROUP_OFFICERS[row.Group]=[];
+          if(!GROUP_OFFICERS[row.Group].includes(row.Name))GROUP_OFFICERS[row.Group].push(row.Name);
+          if(!ALL_OFFICERS.includes(row.Name))ALL_OFFICERS.push(row.Name);
+        }
+      }
+      buildOfficerFilter();renderOfficerPage();
+    }
+    const st=document.getElementById(stId);st.className='csv-st ok';st.textContent=`✅ นำเข้าสำเร็จ ${rows.length} รายการ`;
+    btn.style.display='none';applyFilter();
+    showToast(`✅ นำเข้าสำเร็จ ${rows.length} รายการ`,'success');
+  }catch(e){showToast('❌ '+e.message,'danger');btn.disabled=false;btn.textContent='✅ นำเข้า';}
+}
+
+// drag & drop
+['csvDrop','csvDropOff'].forEach(id=>{
+  const dz=document.getElementById(id);if(!dz)return;
+  const fi=id==='csvDrop'?'csvFile':'csvFileOff';
+  const type=id==='csvDrop'?'coop':'officer';
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.name.endsWith('.csv')){const inp=document.getElementById(fi);const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;handleCSV({files:dt.files},type);}});
+});
+
+// ══════════════════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════════════════
+function exportCSV(){
+  const BOM='\uFEFF';
+  const header='รหัสสหกรณ์,ชื่อสหกรณ์,ประเภท,กลุ่ม,ชื่อ จสส.,เบอร์มือถือ,Gmail';
+  const rows=filteredData.map(r=>[r.Coop_ID,'"'+(r.Coop_Name||'').replace(/"/g,'""')+'"',r.Type,r.Mu,r.Officers,r.Phone_Officer||'',r.Gmail_Officer].join(','));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(BOM+[header,...rows].join('\n'));
+  a.download='สสพ1_'+new Date().toLocaleDateString('th-TH')+'.csv';
+  a.click();showToast('📤 Export CSV สำเร็จ','success');
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+function showToast(msg,type=''){
+  const el=document.createElement('div');el.className='toast '+(type||'');el.textContent=msg;
+  document.getElementById('toastCont').appendChild(el);setTimeout(()=>el.remove(),3400);
+}
+
+boot();
+</script>
+</body>
+</html>
