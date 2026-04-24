@@ -1,15 +1,16 @@
-เพิ่ม Template Config แล้วครับ — แก้ไขได้ง่ายๆ ที่บรรทัดแรกของ <script> เลย:
--------
-javascriptconst CONFIG = {
-  officeName: "Dashboard ตารางนัดหมาย 🎉",      // ← แก้ชื่อหน่วยงาน
-  officeSubName: "สำนักงานส่งเสริมสหกรณ์ กทม.", // ← แก้ชื่อย่อย
-  superAdminPin: "xxxx",                          // ← แก้รหัส Super Admin
+นี่ครับ — วิธีใช้:
+-----------
+เปิด Google Sheet → Extensions → Apps Script
+ลบโค้ดเดิม → วางโค้ดนี้ทั้งหมด
+Deploy → New deployment → Web app
 
-  defaultGroups: [
-    { name: "กลุ่มอำนวยการ", pin: "xxxx" },      // ← เพิ่ม/ลบ/แก้กลุ่มงาน
-    ...
-  ],
-};
+Execute as: Me
+Who has access: Anyone
 
-แค่แก้ใน block นี้ที่เดียว ทุกที่ในระบบจะอัปเดตตามอัตโนมัติ
--------
+
+Copy URL ที่ได้ เช่น https://script.google.com/macros/s/AKfyc.../exec
+นำไปใส่ใน Dashboard พร้อม parameter:
+
+https://script.google.com/macros/s/AKfyc.../exec?id=SHEET_ID&gid=0
+โดย SHEET_ID คือไอดีจาก URL ของ Sheet:
+https://docs.google.com/spreadsheets/d/**[SHEET_ID]**/edit
